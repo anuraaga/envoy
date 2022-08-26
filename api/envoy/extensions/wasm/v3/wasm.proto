@@ -106,6 +106,14 @@ message VmConfig {
   // vars just like when you do on native platforms.
   // Warning: Envoy rejects the configuration if there's conflict of key space.
   EnvironmentVariables environment_variables = 7;
+
+  // Specifies the virtual filesystem visible to the VM, which will be available through
+  // WASI's filesystem system calls such as ``path_filestat_get`` and ``fd_read``. If unset,
+  // no files are accessible within the VM. Note that these functions are mostly implicitly called in your
+  // language's standard library, so you do not need to call them directly and you can access files
+  // just like when you do on native platforms.
+  // Note: Currently, files can only be read and not written.
+  Filesystem filesystem = 8;
 }
 
 message EnvironmentVariables {
@@ -115,6 +123,24 @@ message EnvironmentVariables {
 
   // Explicitly given key-value pairs to be injected to this VM in the form of "KEY=VALUE".
   map<string, string> key_values = 2;
+}
+
+message HostPath {
+  // The path on the host filesystem.
+  string host_path = 1;
+  // The path visible in Wasm plugins. If unset, host_path is used.
+  string wasm_path = 2;
+}
+
+message Filesystem {
+  // Paths (files or directories) from the host filesystem, that will be available for reading
+  // in Wasm plugins.
+  repeated HostPath host_paths = 1;
+
+  // Pre-populated file contents available for reading in Wasm plugins.
+  // The key represents the file path visible in Wasm plugins.
+  // The value contains the content of that file.
+  map<string, string> file_contents = 2;
 }
 
 // Base Configuration for Wasm Plugins e.g. filters and services.
