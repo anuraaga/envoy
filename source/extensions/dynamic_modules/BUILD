@@ -4,7 +4,7 @@ load(
     "envoy_extension_package",
 )
 
-licenses(["notice"])  # Apache 2
+licenses(["notice"])  # Apache 2 CACHE4
 
 envoy_extension_package()
 
