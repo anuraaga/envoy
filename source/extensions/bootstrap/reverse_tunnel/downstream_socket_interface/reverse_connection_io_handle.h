@@ -422,7 +422,7 @@ private:
   Event::Dispatcher* worker_dispatcher_{nullptr}; // Dispatcher for the worker thread
 
   // Store original socket FD for cleanup.
-  os_fd_t original_socket_fd_{-1};
+  os_fd_t original_socket_fd_{static_cast<os_fd_t>(-1)};
 };
 
 } // namespace ReverseConnection
