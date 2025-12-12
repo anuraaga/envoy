@@ -214,7 +214,10 @@ def envoy_exported_symbols_input():
     return [
         "@envoy//bazel:exported_symbols.txt",
         "@envoy//bazel:exported_symbols_apple.txt",
-    ]
+    ] + select({
+        "@envoy//bazel:windows_x86_64": ["//source/extensions/dynamic_modules:dynamic_modules_exports.def"],
+        "//conditions:default": [],
+    })
 
 # Default symbols to be exported.
 def _envoy_default_exported_symbols():
@@ -224,6 +227,9 @@ def _envoy_default_exported_symbols():
         ],
         "@envoy//bazel:apple": [
             "-Wl,-exported_symbols_list,$(location @envoy//bazel:exported_symbols_apple.txt)",
+        ],
+        "@envoy//bazel:windows_x86_64": [
+            "-DEF:$(location //source/extensions/dynamic_modules:dynamic_modules_exports.def)",
         ],
         "//conditions:default": [],
     })

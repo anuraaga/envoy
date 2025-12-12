@@ -1,7 +1,11 @@
 #pragma once
 
+#ifndef WIN32
 #include <netinet/in.h>
 #include <sys/socket.h>
+#else
+#include <winsock2.h>
+#endif // WIN32
 
 #include <functional>
 

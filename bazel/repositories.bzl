@@ -13,6 +13,8 @@ WINDOWS_SKIP_TARGETS = [
     "envoy.filters.http.sxg",
     "envoy.tracers.dynamic_ot",
     "envoy.tracers.datadog",
+    # Only implemented for Linux.
+    "envoy.resource_monitors.cpu_utilization",
     # Extensions that require CEL.
     "envoy.access_loggers.extension_filters.cel",
     "envoy.rate_limit_descriptors.expr",

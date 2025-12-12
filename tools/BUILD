@@ -11,6 +11,12 @@ exports_files([
 ])
 
 py_binary(
+    name = "gen_dynamic_modules_def",
+    srcs = ["gen_dynamic_modules_def.py"],
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
     name = "stack_decode",
     srcs = ["stack_decode.py"],
 )

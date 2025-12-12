@@ -210,7 +210,11 @@ void UpstreamSocketManager::markSocketDead(const int fd) {
     if (fd == itr->get()->ioHandle().fdDoNotUse()) {
       ENVOY_LOG(debug, "UpstreamSocketManager: marking socket dead. node: {} cluster: {} fd: {}.",
                 node_id, cluster_id, fd);
+#ifndef _WIN32
       ::shutdown(fd, SHUT_RDWR);
+#else
+      ::shutdown(fd, SD_BOTH);
+#endif // _WIN32
       itr = sockets.erase(itr);
       socket_found = true;
 
