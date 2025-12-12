@@ -500,6 +500,7 @@ envoy_cmake(
         "CMAKE_C_COMPILER_FORCED": "on",
         "SKIP_BUILD_EXAMPLES": "on",
         "BUILD_SHARED_LIBS": "off",
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded",
 
         # The following entries are for zlib-ng. Since zlib and zlib-ng are compatible source
         # codes and CMake ignores unknown cache entries, it is fine to combine it into one
@@ -521,6 +522,9 @@ envoy_cmake(
         # Only allow aligned address.
         # Reference: https://github.com/zlib-ng/zlib-ng#advanced-build-options.
         "UNALIGNED_OK": "off",
+    },
+    debug_cache_entries = {
+        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreadedDebug",
     },
     generate_args = [
         "-G",
