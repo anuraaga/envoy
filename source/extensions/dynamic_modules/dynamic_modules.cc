@@ -33,14 +33,18 @@ newDynamicModule(const std::filesystem::path& object_file_absolute_path, const b
   // > This can be used to test if the object is already resident (dlopen() returns NULL if it
   // > is not, or the object's handle if it is resident).
   //
+  void* handle = nullptr;
+#ifndef _WIN32
   // So we can use RTLD_NOLOAD to check if the module is already loaded to avoid the duplicate call
-  // to the init function.
-  void* handle = dlopen(object_file_absolute_path.string().c_str(), RTLD_NOLOAD | RTLD_LAZY);
+  // to the init function. Because Windows doesn't support RTLD_NOLOAD, modules that support it
+  // will need to have idempotent init functions.
+  handle = dlopen(object_file_absolute_path.string().c_str(), RTLD_NOLOAD | RTLD_LAZY);
   if (handle != nullptr) {
     // This means the module is already loaded, and the return value is the handle of the already
     // loaded module. We don't need to call the init function again.
     return std::make_unique<DynamicModule>(handle);
   }
+#endif // _WIN32
   // RTLD_LAZY is required for not only performance but also simply to load the module, otherwise
   // dlopen results in Invalid argument.
   int mode = RTLD_LAZY;
