@@ -1,16 +1,6 @@
 #include "source/extensions/dynamic_modules/dynamic_modules.h"
 
-#ifdef WIN32
-#include "dlfcn.h"
-#ifndef RTLD_NOLOAD
-#define RTLD_NOLOAD 0
-#endif
-#ifndef RTLD_NODELETE
-#define RTLD_NODELETE 0
-#endif
-#else // WIN32
 #include <dlfcn.h>
-#endif // WIN32
 
 #include <string>
 
@@ -54,9 +44,11 @@ newDynamicModule(const std::filesystem::path& object_file_absolute_path, const b
     // RTLD_LOCAL is used by default to avoid collisions between multiple modules.
     mode |= RTLD_LOCAL;
   }
+#ifndef _WIN32
   if (do_not_close) {
     mode |= RTLD_NODELETE;
   }
+#endif // _WIN32
   handle = dlopen(object_file_absolute_path.string().c_str(), mode);
   if (handle == nullptr) {
     return absl::InvalidArgumentError(absl::StrCat(
@@ -96,8 +88,8 @@ absl::StatusOr<DynamicModulePtr> newDynamicModuleByName(const absl::string_view 
                                                    " is not set"));
   }
   const std::filesystem::path file_path_absolute =
-#ifdef WIN32
-      std::filesystem::absolute(fmt::format("{}/lib{}.dll", module_search_path, module_name));
+#ifdef _WIN32
+      std::filesystem::absolute(fmt::format("{}/{}.dll", module_search_path, module_name));
 #else
       std::filesystem::absolute(fmt::format("{}/lib{}.so", module_search_path, module_name));
 #endif
