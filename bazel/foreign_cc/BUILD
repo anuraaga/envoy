@@ -591,7 +591,7 @@ configure_make(
         "--disable-shared",
         "--enable-static",
     ],
-    lib_source = "@dlfcn-win32//:all",
+    lib_source = "@com_github_dlfcn_win32//:all",
 )
 
 cc_library(
