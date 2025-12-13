@@ -88,11 +88,11 @@ absl::StatusOr<DynamicModulePtr> newDynamicModuleByName(const absl::string_view 
                                                    " is not set"));
   }
   const std::filesystem::path file_path_absolute =
-#ifdef _WIN32
-      std::filesystem::absolute(fmt::format("{}/{}.dll", module_search_path, module_name));
-#else
+#ifndef _WIN32
       std::filesystem::absolute(fmt::format("{}/lib{}.so", module_search_path, module_name));
-#endif
+#else
+      std::filesystem::absolute(fmt::format("{}/{}.dll", module_search_path, module_name));
+#endif // _WIN32
   return newDynamicModule(file_path_absolute, do_not_close, load_globally);
 }
 

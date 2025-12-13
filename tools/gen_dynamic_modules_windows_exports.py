@@ -13,10 +13,6 @@ def main():
         content = f.read()
 
     # Find all function declarations starting with envoy_dynamic_module_callback_
-    # We assume they look like "void envoy_dynamic_module_callback_foo(...);"
-    # The regex captures the function name.
-    # We look for the return type (void or others), whitespace, then the function name.
-    # Based on abi.h, they seem to be mostly void, but let's be generic.
     # Example: void envoy_dynamic_module_callback_http_get_header(
     matches = re.findall(r'\b(envoy_dynamic_module_callback_\w+)\(', content)
 

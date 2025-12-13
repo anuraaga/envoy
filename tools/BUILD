@@ -11,8 +11,8 @@ exports_files([
 ])
 
 py_binary(
-    name = "gen_dynamic_modules_def",
-    srcs = ["gen_dynamic_modules_def.py"],
+    name = "gen_dynamic_modules_windows_exports",
+    srcs = ["gen_dynamic_modules_windows_exports.py"],
     visibility = ["//visibility:public"],
 )
 

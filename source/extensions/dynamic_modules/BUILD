@@ -4,7 +4,7 @@ load(
     "envoy_extension_package",
 )
 
-licenses(["notice"])  # Apache 2 CACHE7
+licenses(["notice"])  # Apache 2
 
 envoy_extension_package()
 
@@ -32,10 +32,10 @@ envoy_cc_library(
 )
 
 genrule(
-    name = "dynamic_modules_exports",
+    name = "exported_symbols_windows",
     srcs = ["abi.h"],
-    outs = ["dynamic_modules_exports.def"],
-    cmd = "$(location //tools:gen_dynamic_modules_def) $(location abi.h) $@",
-    tools = ["//tools:gen_dynamic_modules_def"],
+    outs = ["exported_symbols_windows.def"],
+    cmd = "$(location //tools:gen_dynamic_modules_windows_exports) $(location abi.h) $@",
+    tools = ["//tools:gen_dynamic_modules_windows_exports"],
     visibility = ["//visibility:public"],
 )

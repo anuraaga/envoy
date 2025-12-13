@@ -193,7 +193,8 @@ Envoy::Network::IoHandlePtr ReverseConnectionIOHandle::accept(struct sockaddr* a
   if (isTriggerPipeReady()) {
     char trigger_byte;
     auto& os_sys_calls = Api::OsSysCallsSingleton::get();
-    ssize_t bytes_read = os_sys_calls.recv(trigger_pipe_read_fd_, &trigger_byte, 1, 0).return_value_;
+    ssize_t bytes_read =
+        os_sys_calls.recv(trigger_pipe_read_fd_, &trigger_byte, 1, 0).return_value_;
     if (bytes_read == 1) {
       ENVOY_LOG(debug, "ReverseConnectionIOHandle: received trigger, processing connection.");
       // When a connection is established, a byte is written to the trigger_pipe_write_fd_ and the
@@ -1039,13 +1040,12 @@ void ReverseConnectionIOHandle::createTriggerPipe() {
   ENVOY_LOG(debug, "ReverseConnectionIOHandle: Creating trigger pipe for single-byte mechanism");
   os_fd_t pipe_fds[2];
   auto& os_sys_calls = Api::OsSysCallsSingleton::get();
-#ifdef WIN32
+#ifdef _WIN32
   // On Windows, we use AF_INET to emulate a pipe with a TCP socket pair.
   const int domain = AF_INET;
 #else
-  // On POSIX, we use AF_UNIX.
   const int domain = AF_UNIX;
-#endif
+#endif // _WIN32
   auto result = os_sys_calls.socketpair(domain, SOCK_STREAM, 0, pipe_fds);
   if (result.return_value_ != 0) {
     ENVOY_LOG(error, "Failed to create trigger pipe: {}", errorDetails(result.errno_));

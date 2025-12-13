@@ -1,6 +1,6 @@
 #pragma once
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <sys/resource.h>
 #endif
 #include <sys/stat.h>
@@ -15,13 +15,13 @@
 #include "envoy/common/pure.h"
 #include "envoy/network/address.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 struct rlimit {
   int rlim_cur;
   int rlim_max;
 };
 #define RLIMIT_NOFILE 7
-#endif
+#endif // _WIN32
 
 namespace Envoy {
 namespace Api {

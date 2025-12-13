@@ -13,9 +13,9 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 """,
+    sha256 = "30a9f72bdf674857899eb7e553df1f0d362c5da2a576ae51f886e1171fbdb399",
     strip_prefix = "dlfcn-win32-1.4.1",
     url = "https://github.com/dlfcn-win32/dlfcn-win32/archive/refs/tags/v1.4.1.tar.gz",
-    sha256 = "30a9f72bdf674857899eb7e553df1f0d362c5da2a576ae51f886e1171fbdb399",
 )
 
 load("//bazel:api_binding.bzl", "envoy_api_binding")
