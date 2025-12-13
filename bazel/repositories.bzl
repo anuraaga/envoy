@@ -924,8 +924,6 @@ def _com_github_luajit_luajit():
         patch_args = ["-p1"],
         patch_cmds = [
             "chmod u+x build.py",
-            "sed -i 's|/Zi|/Z7|g' src/msvcbuild.bat",
-            "sed -i 's|/MD|/MT|g' src/msvcbuild.bat",
         ],
     )
 
