@@ -585,19 +585,23 @@ envoy_cmake(
 )
 
 configure_make(
-    name = "com_github_dlfcn_win32",
+    name = "dlfcn_win32_build",
     configure_in_place = True,
     configure_options = [
         "--disable-shared",
         "--enable-static",
     ],
     lib_source = "@com_github_dlfcn_win32//:all",
+    out_static_libs = select({
+        "//bazel:windows_x86_64": ["libdl.a"],
+        "//conditions:default": [],
+    }),
 )
 
 cc_library(
     name = "dlfcn_win32",
     deps = select({
-        "//bazel:windows_x86_64": [":com_github_dlfcn_win32"],
+        "//bazel:windows_x86_64": [":dlfcn_win32_build"],
         "//conditions:default": [],
     }),
 )

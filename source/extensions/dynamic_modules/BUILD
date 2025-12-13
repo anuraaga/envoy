@@ -30,12 +30,3 @@ envoy_cc_library(
         "abi_version.h",
     ],
 )
-
-genrule(
-    name = "exported_symbols_windows",
-    srcs = ["abi.h"],
-    outs = ["exported_symbols_windows.def"],
-    cmd = "$(location //tools:gen_dynamic_modules_windows_exports) $(location abi.h) $@",
-    tools = ["//tools:gen_dynamic_modules_windows_exports"],
-    visibility = ["//visibility:public"],
-)

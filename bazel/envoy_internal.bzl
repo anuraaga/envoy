@@ -229,7 +229,7 @@ def _envoy_default_exported_symbols():
             "-Wl,-exported_symbols_list,$(location @envoy//bazel:exported_symbols_apple.txt)",
         ],
         "@envoy//bazel:windows_x86_64": [
-            "-DEF:$(location //source/extensions/dynamic_modules:exported_symbols_windows.def)",
+            "-DEF:$(location //envoy/bazel:exported_symbols_windows.def)",
         ],
         "//conditions:default": [],
     })
