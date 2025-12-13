@@ -224,6 +224,7 @@ def envoy_dependencies(skip_targets = []):
     external_http_archive("envoy_examples")
     external_http_archive("envoy_toolshed")
 
+    _com_github_dlfcn_win32()
     _com_github_maxmind_libmaxminddb()
 
     external_http_archive("rules_license")
@@ -1044,5 +1045,11 @@ def _foreign_cc_dependencies():
 def _com_github_maxmind_libmaxminddb():
     external_http_archive(
         name = "com_github_maxmind_libmaxminddb",
+        build_file_content = BUILD_ALL_CONTENT,
+    )
+
+def _com_github_dlfcn_win32():
+    external_http_archive(
+        name = "com_github_dlfcn_win32",
         build_file_content = BUILD_ALL_CONTENT,
     )

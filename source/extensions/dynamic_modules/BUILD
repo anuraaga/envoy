@@ -19,7 +19,7 @@ envoy_cc_library(
         ":abi_version_lib",
         "//envoy/common:exception_lib",
     ] + select({
-        "//bazel:windows_x86_64": ["@dlfcn-win32//:dlfcn-win32"],
+        "//bazel:windows_x86_64": ["//bazel/foreign_cc:dlfcn_win32"],
         "//conditions:default": [],
     }),
 )

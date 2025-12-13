@@ -584,6 +584,24 @@ envoy_cmake(
     working_directory = "build/cmake",
 )
 
+configure_make(
+    name = "com_github_dlfcn_win32",
+    configure_in_place = True,
+    configure_options = [
+        "--disable-shared",
+        "--enable-static",
+    ],
+    lib_source = "@dlfcn-win32//:all",
+)
+
+cc_library(
+    name = "dlfcn_win32",
+    deps = select({
+        "//bazel:windows_x86_64": [":com_github_dlfcn_win32"],
+        "//conditions:default": [],
+    }),
+)
+
 envoy_cmake(
     name = "maxmind",
     build_args = select({
