@@ -1,5 +1,5 @@
 diff --git a/bazel/cel_proto_transitive_descriptor_set.bzl b/bazel/cel_proto_transitive_descriptor_set.bzl
-index e65e0b4a..18843875 100644
+index e65e0b4a..b1bde9b5 100644
 --- a/bazel/cel_proto_transitive_descriptor_set.bzl
 +++ b/bazel/cel_proto_transitive_descriptor_set.bzl
 @@ -28,7 +28,7 @@ def _cel_proto_transitive_descriptor_set(ctx):
@@ -7,7 +7,7 @@ index e65e0b4a..18843875 100644
          inputs = transitive_descriptor_sets,
          progress_message = "Joining descriptors.",
 -        command = ("< \"$1\" xargs cat >{output}".format(output = output.path)),
-+        command = ("env && cd / && pwd -W && cd - && which cat && echo $(which cat) && < \"$1\" xargs $(which cat) >{output}".format(output = output.path)),
++        command = ("echo 'env start' && env && echo 'env end' && cd / && pwd -W && cd - && which cat && echo $(which cat) && < \"$1\" xargs $(which cat) >{output}".format(output = output.path)),
          arguments = [args],
      )
      return DefaultInfo(
