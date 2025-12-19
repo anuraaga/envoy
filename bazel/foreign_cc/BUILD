@@ -119,7 +119,7 @@ configure_make(
     lib_source = "@com_github_luajit_luajit//:all",
     out_include_dir = "include/luajit-2.1",
     out_static_libs = select({
-        "//bazel:windows_x86_64": ["lua51.lib", "vc140.pdb"],
+        "//bazel:windows_x86_64": ["lua51.lib"],
         "//conditions:default": ["libluajit-5.1.a"],
     }),
     targets = [],
