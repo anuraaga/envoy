@@ -7,7 +7,7 @@ index e65e0b4a..f297b747 100644
          inputs = transitive_descriptor_sets,
          progress_message = "Joining descriptors.",
 -        command = ("< \"$1\" xargs cat >{output}".format(output = output.path)),
-+        command = ("echo 'env start' && env && echo 'env end' && echo 'PATH='$PATH && cd / && pwd -W && cd - && pwd -W && which xargs && which cat && < \"$1\" xargs $(which cat) >{output}".format(output = output.path)),
++        command = ("set -x && declare -p PATH && echo 'env start' && env && echo 'env end' && echo 'PATH='$PATH && cd / && pwd -W && cd - && pwd -W && which xargs && which cat && < \"$1\" xargs $(which cat) >{output}".format(output = output.path)),
          arguments = [args],
      )
      return DefaultInfo(
