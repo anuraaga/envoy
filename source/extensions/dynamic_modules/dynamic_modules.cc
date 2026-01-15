@@ -119,7 +119,7 @@ absl::StatusOr<DynamicModulePtr> newDynamicModuleByName(const absl::string_view 
 
   return absl::InvalidArgumentError(
       absl::StrCat("Failed to load dynamic module: lib", module_name,
-                   ".so not found in any search path: ", file_path_absolute.c_str(),
+                   ".so not found in any search path: ", file_path_absolute.string(),
                    " or standard library paths such as LD_LIBRARY_PATH, /usr/lib, etc."));
 }
 
