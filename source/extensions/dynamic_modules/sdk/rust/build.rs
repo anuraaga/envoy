@@ -71,7 +71,12 @@ const char* kAbiVersion = "{}";
       non_exhaustive: false,
     })
     .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
-    .parse_callbacks(Box::new(TrimEnumNameFromVariantName))
+    .parse_callbacks(Box::new(TrimEnumNameFromVariantName));
+
+  #[cfg(target_os = "windows")]
+  let bindings = bindings.extern_fn_block_attrs("#[link(name = \"envoy\", kind = \"raw-dylib\")]");
+
+  let bindings = bindings
     .generate()
     .expect("Unable to generate bindings");
 
