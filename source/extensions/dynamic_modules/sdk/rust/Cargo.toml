@@ -11,6 +11,6 @@ repository = "https://github.com/envoyproxy/envoy"
 mockall = "0.13.1"
 
 [build-dependencies]
-bindgen = { git = "https://github.com/rust-lang/rust-bindgen.git", rev = "74a5f30c14769891e12de53ba275233ef2616819" }
+bindgen = { git = "https://github.com/rust-lang/rust-bindgen.git", rev = "ccd563767ab1509f7c0eb68c6effc79eaf3684a9" }
 
 [lib]
