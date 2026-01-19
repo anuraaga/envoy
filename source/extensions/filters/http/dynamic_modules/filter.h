@@ -20,8 +20,8 @@ class DynamicModuleHttpFilter : public Http::StreamFilter,
                                 public Http::DownstreamWatermarkCallbacks {
 public:
   DynamicModuleHttpFilter(DynamicModuleHttpFilterConfigSharedPtr config,
-                          Stats::SymbolTable& symbol_table)
-      : config_(config), stat_name_pool_(symbol_table) {}
+                          Stats::SymbolTable& symbol_table, uint32_t worker_index)
+      : config_(config), stat_name_pool_(symbol_table), worker_index_(worker_index) {}
   ~DynamicModuleHttpFilter() override;
 
   /**
@@ -206,6 +206,11 @@ public:
   const DynamicModuleHttpFilterConfig& getFilterConfig() const { return *config_; }
   Stats::StatNameDynamicPool& getStatNamePool() { return stat_name_pool_; }
 
+  /**
+   * Returns the worker index assigned to this filter.
+   */
+  uint32_t workerIndex() const { return worker_index_; }
+
 private:
   /**
    * This is a helper function to get the `this` pointer as a void pointer which is passed to the
@@ -234,6 +239,7 @@ private:
   const DynamicModuleHttpFilterConfigSharedPtr config_ = nullptr;
   envoy_dynamic_module_type_http_filter_module_ptr in_module_filter_ = nullptr;
   Stats::StatNameDynamicPool stat_name_pool_;
+  uint32_t worker_index_;
 
   /**
    * This implementation of the AsyncClient::Callbacks is used to handle the response from the HTTP
@@ -308,6 +314,51 @@ private:
   // unique identifier. We store the callback objects here to manage their lifetime.
   absl::flat_hash_map<uint64_t, std::unique_ptr<DynamicModuleHttpFilter::HttpStreamCalloutCallback>>
       http_stream_callouts_;
+
+  // Socket options storage for HTTP filters.
+  struct StoredSocketOption {
+    int64_t level;
+    int64_t name;
+    envoy_dynamic_module_type_socket_option_state state;
+    envoy_dynamic_module_type_socket_direction direction;
+    bool is_int;
+    int64_t int_value;
+    std::string byte_value;
+  };
+
+  std::vector<StoredSocketOption> socket_options_;
+
+public:
+  /**
+   * Store an integer socket option for the current stream and Surface it back to modules.
+   */
+  void storeSocketOptionInt(int64_t level, int64_t name,
+                            envoy_dynamic_module_type_socket_option_state state,
+                            envoy_dynamic_module_type_socket_direction direction, int64_t value);
+
+  /**
+   * Store a bytes socket option for the current stream and Surface it back to modules.
+   */
+  void storeSocketOptionBytes(int64_t level, int64_t name,
+                              envoy_dynamic_module_type_socket_option_state state,
+                              envoy_dynamic_module_type_socket_direction direction,
+                              absl::string_view value);
+
+  /**
+   * Retrieve an integer socket option by level/name/state/direction.
+   */
+  bool tryGetSocketOptionInt(int64_t level, int64_t name,
+                             envoy_dynamic_module_type_socket_option_state state,
+                             envoy_dynamic_module_type_socket_direction direction,
+                             int64_t& value_out) const;
+
+  /**
+   * Retrieve a bytes socket option by level/name/state/direction.
+   */
+  bool tryGetSocketOptionBytes(int64_t level, int64_t name,
+                               envoy_dynamic_module_type_socket_option_state state,
+                               envoy_dynamic_module_type_socket_direction direction,
+                               absl::string_view& value_out) const;
 };
 
 using DynamicModuleHttpFilterSharedPtr = std::shared_ptr<DynamicModuleHttpFilter>;
