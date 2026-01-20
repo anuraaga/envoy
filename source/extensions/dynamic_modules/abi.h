@@ -3179,19 +3179,6 @@ void envoy_dynamic_module_callback_network_filter_config_scheduler_commit(
     envoy_dynamic_module_type_network_filter_config_scheduler_module_ptr scheduler_module_ptr,
     uint64_t event_id);
 
-// --------------------- Network Filter Callbacks - Misc ---------------
-
-/**
- * envoy_dynamic_module_callback_network_filter_get_worker_index is called by the module to get the
- * worker index assigned to the current network filter. This can be used by the module to manage
- * worker-specific resources or perform worker-specific logic.
- * @param filter_envoy_ptr is the pointer to the DynamicModuleNetworkFilter object of the
- * corresponding network filter.
- * @return the worker index assigned to the current network filter.
- */
-uint32_t envoy_dynamic_module_callback_network_filter_get_worker_index(
-    envoy_dynamic_module_type_network_filter_envoy_ptr filter_envoy_ptr);
-
 // =============================================================================
 // ============================= Listener Filter ===============================
 // =============================================================================
