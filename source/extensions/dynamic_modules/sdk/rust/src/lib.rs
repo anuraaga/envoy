@@ -2449,7 +2449,7 @@ impl EnvoyHttpFilter for EnvoyHttpFilterImpl {
   }
 
   fn get_worker_index(&self) -> u32 {
-    0
+    unsafe { abi::envoy_dynamic_module_callback_http_filter_get_worker_index(self.raw_ptr) }
   }
 
   fn set_socket_option_int(
@@ -4725,7 +4725,7 @@ impl EnvoyNetworkFilter for EnvoyNetworkFilterImpl {
   }
 
   fn get_worker_index(&self) -> u32 {
-    0
+    unsafe { abi::envoy_dynamic_module_callback_network_filter_get_worker_index(self.raw) }
   }
 }
 
