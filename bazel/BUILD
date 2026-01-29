@@ -73,9 +73,9 @@ genrule(
 # For Windows, which must list each exported symbol individually.
 genrule(
     name = "exported_symbols_windows",
-    srcs = ["//source/extensions/dynamic_modules:abi.h"],
+    srcs = ["//source/extensions/dynamic_modules/abi:abi.h"],
     outs = ["exported_symbols_windows.def"],
-    cmd = "$(location //tools/windows:gen_dynamic_modules_exports) $(location //source/extensions/dynamic_modules:abi.h) $@",
+    cmd = "$(location //tools/windows:gen_dynamic_modules_exports) $(location //source/extensions/dynamic_modules/abi:abi.h) $@",
     tools = ["//tools/windows:gen_dynamic_modules_exports"],
 )
 
