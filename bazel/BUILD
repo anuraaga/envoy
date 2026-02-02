@@ -537,7 +537,7 @@ selects.config_setting_group(
 
 label_flag(
     name = "zlib",
-    build_setting_default = "@zlib_ng",
+    build_setting_default = "@zlib-ng",
 )
 
 config_setting(
