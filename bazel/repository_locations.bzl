@@ -659,7 +659,6 @@ REPOSITORY_LOCATIONS_SPEC = dict(
         sha256 = "26d4021f6898e23b82ef953078389dd49ac2b5618ac564ade4ef87cced147b38",
         urls = ["https://github.com/bazelbuild/rules_license/releases/download/{version}/rules_license-{version}.tar.gz"],
     ),
-<<<<<<< HEAD
     com_github_dlfcn_win32 = dict(
         project_name = "dlfcn-win32",
         project_desc = "An implementation of dlfcn for Windows.",
@@ -679,10 +678,7 @@ REPOSITORY_LOCATIONS_SPEC = dict(
         license = "MIT",
         license_url = "https://github.com/dlfcn-win32/dlfcn-win32/blob/v{version}/COPYING",
     ),
-    com_github_maxmind_libmaxminddb = dict(
-=======
     libmaxminddb = dict(
->>>>>>> 9edc64ff07ce2f934adf8f3768d9ac5cc51c07f2
         version = "1.12.2",
         sha256 = "1bfbf8efba3ed6462e04e225906ad5ce5fe958aa3d626a1235b2a2253d600743",
         strip_prefix = "libmaxminddb-{version}",
