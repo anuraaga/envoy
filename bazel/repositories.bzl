@@ -240,12 +240,8 @@ def envoy_dependencies(skip_targets = []):
     external_http_archive("bazel_compdb")
     external_http_archive("envoy_toolshed")
 
-<<<<<<< HEAD
     _com_github_dlfcn_win32()
-    _com_github_maxmind_libmaxminddb()
-=======
     _libmaxminddb()
->>>>>>> 9edc64ff07ce2f934adf8f3768d9ac5cc51c07f2
     _thrift()
 
     external_http_archive("rules_license")
@@ -851,18 +847,12 @@ def _emsdk():
 def _luajit():
     LUAJIT_BUILD_CONTENT = """%s\nalias(name = "luajit", actual = ":all", visibility = ["//visibility:public"])""" % BUILD_ALL_CONTENT
     external_http_archive(
-<<<<<<< HEAD
-        name = "com_github_luajit_luajit",
-        build_file_content = BUILD_ALL_CONTENT,
+        name = "luajit",
+        build_file_content = LUAJIT_BUILD_CONTENT,
         patches = [
             "@envoy//bazel/foreign_cc:luajit.patch",
             "@envoy//bazel/foreign_cc:luajit_win.patch",
         ],
-=======
-        name = "luajit",
-        build_file_content = LUAJIT_BUILD_CONTENT,
-        patches = ["@envoy//bazel/foreign_cc:luajit.patch"],
->>>>>>> 9edc64ff07ce2f934adf8f3768d9ac5cc51c07f2
         patch_args = ["-p1"],
     )
 
