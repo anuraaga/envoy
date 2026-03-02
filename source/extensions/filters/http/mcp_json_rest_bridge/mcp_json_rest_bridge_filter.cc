@@ -222,8 +222,11 @@ absl::Status McpJsonRestBridgeFilter::validateJsonRpcIdAndMethod(const nlohmann:
     sendErrorResponse(Http::Code::BadRequest, "mcp_json_rest_bridge_filter_method_not_string",
                       generateErrorJsonResponse(-32601, "Method field is not a string").dump());
     return absl::InvalidArgumentError("Method field is not a string");
-  } else if (json_rpc[McpConstants::METHOD_FIELD] ==
-             McpConstants::Methods::NOTIFICATION_INITIALIZED) {
+  }
+
+  const absl::string_view method =
+      json_rpc[McpConstants::METHOD_FIELD].get_ref<const std::string&>();
+  if (method == McpConstants::Methods::NOTIFICATION_INITIALIZED) {
     // The notifications/initialized request is not required to have an ID
     // field.
   } else if (!session_id.ok()) {
