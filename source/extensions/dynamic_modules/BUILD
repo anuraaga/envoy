@@ -17,6 +17,7 @@ envoy_cc_library(
     ],
     deps = [
         "//envoy/common:exception_lib",
+        "//source/common/common:utility_lib",
         "//source/extensions/dynamic_modules/abi",
     ] + select({
         "//bazel:windows_x86_64": ["//bazel/foreign_cc:dlfcn_win32"],
