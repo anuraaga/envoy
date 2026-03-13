@@ -1,9 +1,15 @@
 #include "source/extensions/dynamic_modules/dynamic_modules.h"
 
 #include <dlfcn.h>
-#include <unistd.h>
-
 #include <cerrno>
+#ifndef _WIN32
+#include <unistd.h>
+#else
+#include <fcntl.h>
+#include <io.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#endif
 #include <string>
 
 #include "envoy/common/exception.h"
@@ -174,7 +180,19 @@ absl::StatusOr<DynamicModulePtr> newDynamicModuleFromBytes(const absl::string_vi
   // If the module was already loaded at this path, newDynamicModule's RTLD_NOLOAD check
   // returns the existing handle without re-init.
   std::string staging_template = temp_file_path.string() + ".XXXXXX";
-  int fd = mkstemp(staging_template.data());
+  int fd = -1;
+#ifndef _WIN32
+  fd = mkstemp(staging_template.data());
+#else
+  const errno_t mktemp_result = _mktemp_s(staging_template.data(), staging_template.size() + 1);
+  if (mktemp_result != 0) {
+    return absl::InternalError(absl::StrCat(
+        "Failed to create temporary staging file for dynamic module: ", staging_template, ": ",
+        errorDetails(mktemp_result)));
+  }
+  fd = _open(staging_template.c_str(), _O_CREAT | _O_EXCL | _O_WRONLY | _O_BINARY,
+             _S_IREAD | _S_IWRITE);
+#endif
   if (fd == -1) {
     return absl::InternalError(absl::StrCat(
         "Failed to create temporary staging file for dynamic module: ", staging_template, ": ",
@@ -183,20 +201,33 @@ absl::StatusOr<DynamicModulePtr> newDynamicModuleFromBytes(const absl::string_vi
 
   size_t total_written = 0;
   while (total_written < module_bytes.size()) {
+#ifndef _WIN32
     ssize_t written =
         write(fd, module_bytes.data() + total_written, module_bytes.size() - total_written);
+#else
+    int written = _write(fd, module_bytes.data() + total_written,
+                         static_cast<unsigned int>(module_bytes.size() - total_written));
+#endif
     if (written < 0) {
+#ifndef _WIN32
       if (errno == EINTR) {
         continue;
       }
       close(fd);
+#else
+      _close(fd);
+#endif
       std::filesystem::remove(staging_template);
       return absl::InternalError(
           absl::StrCat("Failed to write to staging file for dynamic module: ", staging_template));
     }
     total_written += written;
   }
+#ifndef _WIN32
   close(fd);
+#else
+  _close(fd);
+#endif
 
   std::filesystem::path staging_path(staging_template);
   std::filesystem::permissions(staging_path, std::filesystem::perms::owner_all,
