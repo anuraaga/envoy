@@ -187,6 +187,7 @@ def envoy_dependencies(skip_targets = []):
     _libsxg()
     _tcmalloc()
     _gperftools()
+    _jemalloc()
     _com_github_grpc_grpc()
     _rules_proto_grpc()
     _icu()
@@ -743,10 +744,11 @@ def _v8():
             "find ./src ./include -type f -exec sed -i.bak -e 's!#include \"third_party/fast_float/src/include/fast_float/!#include \"fast_float/!' {} \\;",
             # TODO(jwendell): Remove the atomic_ref polyfill injection once the LLVM toolchain is
             # bumped to a version whose libc++ provides std::atomic_ref (LLVM 19+).
-            "grep -rl 'std::atomic_ref' src/ include/ --include='*.h' --include='*.cc' | grep -v atomic_ref_polyfill | xargs -r sed -i '1s!^!#include \"src/base/atomic_ref_polyfill.h\"\\n!'",
+            "grep -rl 'std::atomic_ref' src/ include/ --include='*.h' --include='*.cc' | grep -v atomic_ref_polyfill | while IFS= read -r f; do { echo '#include \"src/base/atomic_ref_polyfill.h\"'; cat \"$f\"; } > \"$f.tmp\" && mv \"$f.tmp\" \"$f\"; done",
             # TODO(jwendell): Remove consteval->constexpr workaround once the LLVM toolchain is
             # bumped. Clang 18 has bugs with consteval in template contexts (fixed in clang 19+).
-            "find ./src -type f \\( -name '*.h' -o -name '*.cc' \\) -exec sed -i 's/consteval/constexpr/g' {} \\;",
+            "find ./src -type f \\( -name '*.h' -o -name '*.cc' \\) -exec sed -i.bak 's/consteval/constexpr/g' {} \\;",
+            "find ./src -type f -name '*.bak' -delete",
         ],
     )
 
@@ -812,7 +814,7 @@ template <typename T> atomic_ref(T&) -> atomic_ref<T>;
 #endif
 #endif
 EOF""",
-            "sed -i '1s!^!#include \"atomic_ref_polyfill.h\"\\n!' simdutf.cpp",
+            "{ echo '#include \"atomic_ref_polyfill.h\"'; cat simdutf.cpp; } > simdutf.cpp.tmp && mv simdutf.cpp.tmp simdutf.cpp",
         ],
     )
 
@@ -910,6 +912,12 @@ def _tcmalloc():
 def _gperftools():
     external_http_archive(
         name = "gperftools",
+    )
+
+def _jemalloc():
+    external_http_archive(
+        name = "jemalloc",
+        build_file_content = BUILD_ALL_CONTENT,
     )
 
 def _wamr():
