@@ -34,6 +34,8 @@ WINDOWS_SKIP_TARGETS = [
     "envoy.filters.http.rbac",
     "envoy.filters.network.rbac",
     "envoy.rbac.matchers.upstream_ip_port",
+    # TODO: See if objcopy issue can be resolved
+    "envoy.network.dns_resolver.hickory",
 ]
 
 NO_HTTP3_SKIP_TARGETS = [

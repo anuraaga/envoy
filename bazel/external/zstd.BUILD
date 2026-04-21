@@ -53,12 +53,6 @@ cc_library(
         "lib/zstd.h",
         "lib/zstd_errors.h",
     ],
-    includes = ["lib"],
-    linkopts = select({
-        "@platforms//os:windows": [],
-        "//conditions:default": ["-pthread"],
-    }),
-    linkstatic = True,
     defines = [
         "XXH_NAMESPACE=ZSTD_",
         "ZSTD_MULTITHREAD",
@@ -69,7 +63,10 @@ cc_library(
         "//conditions:default": [],
     }),
     includes = ["lib"],
-    linkopts = ["-pthread"],
+    linkopts = select({
+        "@platforms//os:windows": [],
+        "//conditions:default": ["-pthread"],
+    }),
     linkstatic = True,
 )
 
