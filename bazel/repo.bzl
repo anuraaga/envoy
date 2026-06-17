@@ -90,7 +90,6 @@ def _envoy_repo_impl(repository_ctx):
         sha_worker = build_image["sha-worker"],
         tag = build_image["tag"],
     ))
-
     repo_version_path = repository_ctx.path(repository_ctx.attr.envoy_version)
     api_version_path = repository_ctx.path(repository_ctx.attr.envoy_api_version)
     version = repository_ctx.read(repo_version_path).strip()
