@@ -31,11 +31,7 @@ DynamicModuleAccessLog::DynamicModuleAccessLog(AccessLog::FilterPtr&& filter,
 
   tls_slot_->set([config](Event::Dispatcher& dispatcher) {
     uint32_t worker_index;
-#if TEST_THREAD_SUPPORTED
     if (Envoy::Thread::MainThread::isMainOrTestThread()) {
-#else
-    if (Envoy::Thread::MainThread::isMainThread()) {
-#endif
       auto context = Server::Configuration::ServerFactoryContextInstance::getExisting();
       auto concurrency = context->options().concurrency();
       worker_index = concurrency; // Set main/test thread on free index.

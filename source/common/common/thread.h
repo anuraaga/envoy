@@ -236,6 +236,8 @@ public:
    * is not supported.
    */
   static bool isMainOrTestThread() { return isMainThread() || TestThread::isTestThread(); }
+#else
+  static bool isMainOrTestThread() { return isMainThread(); }
 #endif
 
   /**
