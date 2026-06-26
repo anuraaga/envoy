@@ -146,7 +146,6 @@ envoy_cc_library(
         "//source/common/protobuf:utility_lib",
         "//source/common/stats:symbol_table_lib",
         "//source/common/watchdog:abort_action_config",
-        "@abseil-cpp//absl/types:optional",
         "@envoy_api//envoy/config/bootstrap/v3:pkg_cc_proto",
         "@envoy_api//envoy/watchdog/v3:pkg_cc_proto",
     ],
@@ -243,7 +242,6 @@ envoy_cc_library(
         "//source/common/filesystem:filesystem_lib",
         "//source/common/singleton:threadsafe_singleton",
         "@abseil-cpp//absl/strings",
-        "@abseil-cpp//absl/types:optional",
     ],
 )
 
@@ -446,7 +444,6 @@ envoy_cc_library(
         "//source/common/version:version_lib",
         "//source/server/admin:admin_lib",
         "@abseil-cpp//absl/container:node_hash_map",
-        "@abseil-cpp//absl/types:optional",
         "@envoy_api//envoy/admin/v3:pkg_cc_proto",
         "@envoy_api//envoy/config/bootstrap/v3:pkg_cc_proto",
     ],
