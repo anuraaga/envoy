@@ -7,6 +7,8 @@
 #include <sys/stat.h>
 
 #include <chrono>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -23,6 +25,8 @@ struct rlimit {
 };
 #define RLIMIT_NOFILE 7
 #endif // _WIN32
+
+#include "absl/strings/string_view.h"
 
 namespace Envoy {
 namespace Api {

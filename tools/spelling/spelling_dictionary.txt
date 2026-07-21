@@ -18,6 +18,7 @@ flushdb
 itr
 STREQ
 htonl
+htons
 ABI
 ACK
 ACL
@@ -85,6 +86,7 @@ Reserializer
 SION
 TRA
 Websockets
+reentrancy
 webtransport
 WEBTRANSPORT
 signalling
@@ -507,6 +509,7 @@ SIGINT
 SIGPIPE
 SIGSEGV
 SIGTERM
+SIGUSR
 SIMD
 SIO
 SSE
@@ -760,6 +763,7 @@ conns
 const
 constexpr
 constructible
+cooldown
 copyable
 coroutine
 coroutines
@@ -785,6 +789,7 @@ datacenter
 datadog
 datagram
 datagrams
+datapath
 de
 deallocate
 deallocated
@@ -851,6 +856,7 @@ dup
 durations
 dynamodb
 eg
+el
 emplace
 emplaced
 emscripten
@@ -968,6 +974,7 @@ healths
 healthz
 hermeticity
 highp
+hl
 hit
 hoc
 hostname
@@ -1048,6 +1055,7 @@ ldd
 len
 lenenc
 lexically
+libbpf
 libc
 libevent
 libprotobuf
@@ -1325,6 +1333,7 @@ redispatch
 redistributions
 reentrant
 reentrants
+reentrantly
 refactor
 refactored
 refcount
@@ -1441,7 +1450,9 @@ snapshotted
 sockaddr
 socketpair
 sockfd
+sockhash
 socklen
+sockmap
 sockopt
 sockopts
 somestring
@@ -1543,6 +1554,7 @@ testcase
 testcases
 testdata
 testee
+tgkill
 threadsafe
 thru
 timespan
@@ -1750,3 +1762,30 @@ datasets
 smartptr
 JA3
 JA4
+AiProtocolManager
+modelling
+delegator
+CNSA
+KEM
+MSS
+SERVFAIL
+WR
+exceptionless
+freeaddrinfo
+fstat
+getrlimit
+linkat
+mkstemp
+muxes
+pread
+pwrite
+setns
+setrlimit
+preprocessor
+RDWR
+stringification
+RMW
+acq
+interleavings
+millis
+msgs
