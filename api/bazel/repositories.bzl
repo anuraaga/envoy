@@ -62,6 +62,9 @@ def api_dependencies(bzlmod = False):
         name = "opentelemetry-proto",
         location_name = "opentelemetry_proto",
         build_file_content = OPENTELEMETRY_BUILD_CONTENT,
+        # Avoid shadowing the C++ standard <version> header on case-insensitive file systems.
+        patch_cmds = ["rm VERSION"],
+        patch_cmds_win = ["Remove-Item VERSION"],
         repo_mapping = {"@com_google_absl": "@abseil-cpp"},
     )
     external_http_archive(

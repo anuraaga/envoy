@@ -14,6 +14,8 @@ WINDOWS_SKIP_TARGETS = [
     "envoy.filters.http.sxg",
     "envoy.tracers.dynamic_ot",
     "envoy.tracers.datadog",
+    # Requires POSIX signal handling.
+    "envoy.watchdog.backtrace_action",
     # Only implemented for Linux.
     "envoy.resource_monitors.cpu_utilization",
     # Extensions that require CEL.
