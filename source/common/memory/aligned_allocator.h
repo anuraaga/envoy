@@ -1,6 +1,10 @@
 #pragma once
 
-#if defined(__ANDROID_API__) && __ANDROID_API__ < 28
+#if defined(_WIN32)
+#include <malloc.h>
+
+#define ALIGNED_ALLOCATOR_USE_WIN32_ALIGNED_MALLOC 1
+#elif defined(__ANDROID_API__) && __ANDROID_API__ < 28
 #include <stdlib.h>
 
 #define ALIGNED_ALLOCATOR_USE_POSIX_MEMALIGN 1
@@ -40,14 +44,14 @@ public:
       return nullptr;
     }
     std::size_t bytes = n * sizeof(T);
-#ifdef ALIGNED_ALLOCATOR_USE_POSIX_MEMALIGN
+#if defined(ALIGNED_ALLOCATOR_USE_WIN32_ALIGNED_MALLOC)
+    return static_cast<T*>(_aligned_malloc(bytes, Alignment));
+#elif defined(ALIGNED_ALLOCATOR_USE_POSIX_MEMALIGN)
     void* ptr = nullptr;
     if (posix_memalign(&ptr, Alignment, bytes) != 0) {
       return nullptr;
     }
     return static_cast<T*>(ptr);
-#elif defined(_WIN32)
-    return static_cast<T*>(_aligned_malloc(bytes, Alignment));
 #else
     // Ensure bytes is a multiple of Alignment, which is required by std::aligned_alloc.
     bytes = round_up_to_alignment(bytes);
@@ -57,10 +61,10 @@ public:
 
   void deallocate(T* p, std::size_t) noexcept {
     if (p != nullptr) {
-#ifdef ALIGNED_ALLOCATOR_USE_POSIX_MEMALIGN
-      free(p);
-#elif defined(_WIN32)
+#if defined(ALIGNED_ALLOCATOR_USE_WIN32_ALIGNED_MALLOC)
       _aligned_free(p);
+#elif defined(ALIGNED_ALLOCATOR_USE_POSIX_MEMALIGN)
+      free(p);
 #else
       std::free(p);
 #endif

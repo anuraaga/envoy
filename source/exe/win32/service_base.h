@@ -1,9 +1,16 @@
 #pragma once
 
+// clang-format off
+#include <windows.h>
+// clang-format on
+
+#include <processenv.h>
+#include <shellapi.h>
+#include <winsvc.h>
+
 #include <functional>
 #include <string>
 
-#include "envoy/common/platform.h"
 #include "envoy/event/signal.h"
 
 #include "source/common/common/win32/event_logger_impl.h"

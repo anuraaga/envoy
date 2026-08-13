@@ -2,8 +2,6 @@
 
 #include <codecvt>
 #include <locale>
-#include <processenv.h>
-#include <shellapi.h>
 
 #include "source/common/buffer/buffer_impl.h"
 #include "source/common/common/assert.h"
