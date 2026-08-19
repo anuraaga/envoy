@@ -3,6 +3,7 @@
 #include "source/common/api/os_sys_calls_impl.h"
 #include "source/common/event/dispatcher_impl.h"
 
+#include "absl/status/status.h"
 #include "event2/event.h"
 
 namespace Envoy {
