@@ -189,6 +189,7 @@ public:
 #if defined(__linux__) || defined(__APPLE__)
 #define TEST_THREAD_SUPPORTED 1
 #else
+// Windows does not support TestThread::isTestThread()
 #define TEST_THREAD_SUPPORTED 0
 #endif
 
