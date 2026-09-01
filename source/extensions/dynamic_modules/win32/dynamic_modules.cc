@@ -1,15 +1,12 @@
 #include "source/extensions/dynamic_modules/dynamic_modules.h"
 
 #include <dlfcn.h>
-#include <cerrno>
-#ifndef _WIN32
-#include <unistd.h>
-#else
 #include <fcntl.h>
 #include <io.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#endif
+
+#include <cerrno>
 #include <fstream>
 #include <string>
 #include <system_error>
@@ -35,6 +32,19 @@ namespace DynamicModules {
 
 constexpr char DYNAMIC_MODULES_SEARCH_PATH[] = "ENVOY_DYNAMIC_MODULES_SEARCH_PATH";
 
+namespace {
+
+// Logged from the loader itself so that every extension type reports load failures, including the
+// ones that have no scope to increment ``dynamic_modules.module_load_error`` on. It is also the
+// only signal for a module named in the bootstrap config, since the server then exits before its
+// statistics can be scraped.
+void logModuleLoadFailure(absl::string_view module, absl::string_view reason) {
+  ENVOY_LOG_TO_LOGGER(Envoy::Logger::Registry::getLog(Envoy::Logger::Id::dynamic_modules), error,
+                      "Unable to load dynamic module {}: {}", module, reason);
+}
+
+} // namespace
+
 absl::StatusOr<DynamicModulePtr>
 newDynamicModule(const std::filesystem::path& object_file_absolute_path, const bool do_not_close,
                  const bool load_globally) {
@@ -44,17 +54,6 @@ newDynamicModule(const std::filesystem::path& object_file_absolute_path, const b
   // > is not, or the object's handle if it is resident).
   //
   void* handle = nullptr;
-#ifndef _WIN32
-  // So we can use RTLD_NOLOAD to check if the module is already loaded to avoid the duplicate call
-  // to the init function. Because Windows doesn't support RTLD_NOLOAD, modules that support it
-  // will need to have idempotent init functions.
-  handle = dlopen(object_file_absolute_path.string().c_str(), RTLD_NOLOAD | RTLD_LAZY);
-  if (handle != nullptr) {
-    // This means the module is already loaded, and the return value is the handle of the already
-    // loaded module. We don't need to call the init function again.
-    return std::make_unique<DynamicModule>(handle);
-  }
-#endif // _WIN32
   // RTLD_LAZY is required for not only performance but also simply to load the module, otherwise
   // dlopen results in Invalid argument.
   int mode = RTLD_LAZY;
@@ -64,15 +63,15 @@ newDynamicModule(const std::filesystem::path& object_file_absolute_path, const b
     // RTLD_LOCAL is used by default to avoid collisions between multiple modules.
     mode |= RTLD_LOCAL;
   }
-#ifndef _WIN32
-  if (do_not_close) {
-    mode |= RTLD_NODELETE;
-  }
-#endif // _WIN32
   handle = dlopen(object_file_absolute_path.string().c_str(), mode);
   if (handle == nullptr) {
+    // `dlerror()` returns null when no error is pending, so do not pass it along unchecked.
+    const char* dlopen_error = dlerror();
+    const absl::string_view reason =
+        dlopen_error != nullptr ? dlopen_error : "unknown dlopen error";
+    logModuleLoadFailure(object_file_absolute_path.string(), reason);
     return absl::InvalidArgumentError(absl::StrCat(
-        "Failed to load dynamic module: ", object_file_absolute_path.string(), " : ", dlerror()));
+        "Failed to load dynamic module: ", object_file_absolute_path.string(), " : ", reason));
   }
 
   DynamicModulePtr dynamic_module = std::make_unique<DynamicModule>(handle);
@@ -82,11 +81,14 @@ newDynamicModule(const std::filesystem::path& object_file_absolute_path, const b
           "envoy_dynamic_module_on_program_init");
 
   if (!init_function.ok()) {
+    logModuleLoadFailure(object_file_absolute_path.string(), init_function.status().message());
     return init_function.status();
   }
 
   const char* abi_version = (*init_function.value())();
   if (abi_version == nullptr) {
+    logModuleLoadFailure(object_file_absolute_path.string(),
+                         "envoy_dynamic_module_on_program_init returned null");
     return absl::InvalidArgumentError(
         absl::StrCat("Failed to initialize dynamic module: ", object_file_absolute_path.string()));
   }
@@ -119,14 +121,8 @@ absl::StatusOr<DynamicModulePtr> newDynamicModuleByNameImpl(const absl::string_v
   if (!module_search_path) {
     module_search_path = ".";
   }
-
-#ifndef _WIN32
-  const std::filesystem::path file_path =
-      std::filesystem::path(module_search_path) / fmt::format("lib{}.so", module_name);
-#else
   const std::filesystem::path file_path =
       std::filesystem::path(module_search_path) / fmt::format("{}.dll", module_name);
-#endif // _WIN32
   const std::filesystem::path file_path_absolute = std::filesystem::absolute(file_path);
   if (std::filesystem::exists(file_path_absolute)) {
     absl::StatusOr<DynamicModulePtr> dynamic_module =
@@ -244,9 +240,6 @@ absl::Status writeDynamicModuleBytesToDisk(const absl::string_view module_bytes,
   // Write the (already SHA256-verified) bytes to a staging file, then atomically rename.
   std::string staging_template = temp_file_path.string() + ".XXXXXX";
   int fd = -1;
-#ifndef _WIN32
-  fd = mkstemp(staging_template.data());
-#else
   const errno_t mktemp_result = _mktemp_s(staging_template.data(), staging_template.size() + 1);
   if (mktemp_result != 0) {
     return absl::InternalError(absl::StrCat(
@@ -255,7 +248,6 @@ absl::Status writeDynamicModuleBytesToDisk(const absl::string_view module_bytes,
   }
   fd = _open(staging_template.c_str(), _O_CREAT | _O_EXCL | _O_WRONLY | _O_BINARY,
              _S_IREAD | _S_IWRITE);
-#endif
   if (fd == -1) {
     return absl::InternalError(absl::StrCat(
         "Failed to create temporary staging file for dynamic module: ", staging_template, ": ",
@@ -264,22 +256,10 @@ absl::Status writeDynamicModuleBytesToDisk(const absl::string_view module_bytes,
 
   size_t total_written = 0;
   while (total_written < module_bytes.size()) {
-#ifndef _WIN32
-    ssize_t written =
-        write(fd, module_bytes.data() + total_written, module_bytes.size() - total_written);
-#else
     int written = _write(fd, module_bytes.data() + total_written,
                          static_cast<unsigned int>(module_bytes.size() - total_written));
-#endif
     if (written < 0) {
-#ifndef _WIN32
-      if (errno == EINTR) {
-        continue;
-      }
-      close(fd);
-#else
       _close(fd);
-#endif
       std::error_code cleanup_ec;
       std::filesystem::remove(staging_template, cleanup_ec);
       return absl::InternalError(
@@ -287,11 +267,7 @@ absl::Status writeDynamicModuleBytesToDisk(const absl::string_view module_bytes,
     }
     total_written += written;
   }
-#ifndef _WIN32
-  close(fd);
-#else
   _close(fd);
-#endif
 
   std::filesystem::path staging_path(staging_template);
   std::error_code ec;
@@ -341,11 +317,13 @@ absl::StatusOr<DynamicModulePtr> newStaticModule(const absl::string_view module_
       dynamic_module->getFunctionPointer<decltype(&envoy_dynamic_module_on_program_init)>(
           "envoy_dynamic_module_on_program_init");
   if (!init_function.ok()) {
+    logModuleLoadFailure(module_name, init_function.status().message());
     return init_function.status();
   }
 
   const char* abi_version = (*init_function.value())();
   if (abi_version == nullptr) {
+    logModuleLoadFailure(module_name, "envoy_dynamic_module_on_program_init returned null");
     return absl::InvalidArgumentError(
         absl::StrCat("Failed to initialize static module: ", module_name));
   }

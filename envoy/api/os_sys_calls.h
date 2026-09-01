@@ -1,9 +1,5 @@
 #pragma once
 
-#ifndef _WIN32
-#include <sys/resource.h>
-
-#endif
 #include <sys/stat.h>
 
 #include <chrono>
@@ -17,14 +13,6 @@
 #include "envoy/common/platform.h"
 #include "envoy/common/pure.h"
 #include "envoy/network/address.h"
-
-#ifdef _WIN32
-struct rlimit {
-  int rlim_cur;
-  int rlim_max;
-};
-#define RLIMIT_NOFILE 7
-#endif // _WIN32
 
 #include "absl/strings/string_view.h"
 
@@ -312,14 +300,9 @@ public:
   virtual void freeaddrinfo(addrinfo* res) PURE;
 
   /**
-   * @see man getrlimit
+   * @see Increase soft file descriptor limit to match hard limit.
    */
-  virtual SysCallIntResult getrlimit(int resource, struct rlimit* rlim) PURE;
-
-  /**
-   * @see man setrlimit
-   */
-  virtual SysCallIntResult setrlimit(int resource, const struct rlimit* rlim) PURE;
+  virtual SysCallIntResult raiseFileLimits() PURE;
 };
 
 using OsSysCallsPtr = std::unique_ptr<OsSysCalls>;
