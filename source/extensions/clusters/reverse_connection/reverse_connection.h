@@ -1,19 +1,12 @@
 #pragma once
 
-#ifndef _WIN32
-#include <netinet/in.h>
-#include <sys/socket.h>
-
-#else
-#include <winsock2.h>
-#endif // _WIN32
-
 #include <cstdint>
 #include <cstring>
 #include <functional>
 #include <string>
 #include <vector>
 
+#include "envoy/common/platform.h"
 #include "envoy/config/cluster/v3/cluster.pb.h"
 #include "envoy/extensions/clusters/reverse_connection/v3/reverse_connection.pb.h"
 #include "envoy/extensions/clusters/reverse_connection/v3/reverse_connection.pb.validate.h"
