@@ -46,7 +46,7 @@ envoy_cc_library(
         "@envoy_api//envoy/config/core/v3:pkg_cc_proto",
         "@envoy_api//envoy/extensions/dynamic_modules/v3:pkg_cc_proto",
     ] + select({
-        "//bazel:windows_x86_64": ["//bazel/foreign_cc:dlfcn_win32"],
+        "//bazel:windows_x86_64": ["//bazel/windows:dlfcn_win32"],
         "//conditions:default": [],
     }),
 )

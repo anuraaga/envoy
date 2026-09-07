@@ -156,6 +156,26 @@ c-ares:
   license: "c-ares"
   license_url: "https://github.com/c-ares/c-ares/blob/cares-{underscore_version}/LICENSE.md"
 
+com_github_dlfcn_win32:
+  project_name: "dlfcn-win32"
+  project_desc: "An implementation of dlfcn for Windows."
+  project_url: "https://github.com/dlfcn-win32/dlfcn-win32"
+  version: "1.4.2"
+  sha256: "f61a874bc9163ab488accb364fd681d109870c86e8071f4710cbcdcbaf9f2565"
+  strip_prefix: "dlfcn-win32-1.4.2"
+  urls:
+  - "https://github.com/dlfcn-win32/dlfcn-win32/archive/refs/tags/v1.4.2.tar.gz"
+  use_category:
+  - dataplane_ext
+  extensions:
+  - envoy.filters.http.dynamic_modules
+  - envoy.filters.listener.dynamic_modules
+  - envoy.filters.network.dynamic_modules
+  release_date: "2025-03-04"
+  cpe: "N/A"
+  license: "MIT"
+  license_url: "https://github.com/dlfcn-win32/dlfcn-win32/blob/v1.4.2/COPYING"
+
 cel-cpp:
   project_name: "Common Expression Language (CEL) C++ library"
   project_desc: "Common Expression Language (CEL) C++ library"
