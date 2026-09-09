@@ -9,8 +9,10 @@ exports_files([
     "cel-cpp.patch",
     "dlfcn_win32.BUILD",
     "envoy_toolshed.patch",
+    "libevent.patch",
     "luajit.patch",
     "proto-converter.patch",
+    "quiche.patch",
 ])
 
 configure_make(

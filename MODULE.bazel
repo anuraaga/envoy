@@ -182,6 +182,12 @@ single_version_override(
 )
 
 single_version_override(
+    module_name = "libevent",
+    patch_strip = 1,
+    patches = ["//bazel/windows:libevent.patch"],
+)
+
+single_version_override(
     module_name = "luajit",
     patch_strip = 1,
     patches = ["//bazel/windows:luajit.patch"],
@@ -191,6 +197,12 @@ single_version_override(
     module_name = "proto-converter",
     patch_strip = 1,
     patches = ["//bazel/windows:proto-converter.patch"],
+)
+
+single_version_override(
+    module_name = "quiche",
+    patch_strip = 1,
+    patches = ["//bazel/windows:quiche.patch"],
 )
 
 # testing/debugging
