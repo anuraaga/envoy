@@ -8,10 +8,8 @@ envoy_package()
 exports_files([
     "cel-cpp.patch",
     "dlfcn_win32.BUILD",
-    "libevent.patch",
     "luajit.patch",
     "proto-converter.patch",
-    "quiche.patch",
 ])
 
 configure_make(
