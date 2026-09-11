@@ -13,6 +13,7 @@ bazel_dep(name = "apple_support", version = "2.3.0", repo_name = "build_bazel_ap
 bazel_dep(name = "aspect_bazel_lib", version = "2.22.0")
 bazel_dep(name = "aspect_rules_js", version = "2.5.0")
 bazel_dep(name = "aws-c-auth-testdata", version = "0.10.4.envoy")
+
 bazel_dep(name = "bazel-compdb", version = "0.0.0-20220906-4086479.envoy")
 bazel_dep(name = "bazel_features", version = "1.50.0")
 bazel_dep(name = "bazel_skylib", version = "1.9.0")
@@ -228,7 +229,7 @@ use_repo(grcov_ext, "grcov")
 # Prebuilt wee8 (V8) static library, selected via the //bazel:v8_engine flag.
 wee8_ext = use_extension("@envoy_toolshed//v8:extensions.bzl", "wee8_prebuilt_extension")
 wee8_ext.setup()
-use_repo(wee8_ext, "wee8_prebuilt_aarch64", "wee8_prebuilt_x86_64", "wee8_prebuilt_x86_64_libstdcxx")
+use_repo(wee8_ext, "wee8_prebuilt_x86_64", "wee8_prebuilt_x86_64_libstdcxx", "wee8_prebuilt_aarch64")
 
 llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
 llvm.cxx_cross_lib(
@@ -403,9 +404,9 @@ register_toolchains("@rust_toolchains//:all")
 
 crate = use_extension("@rules_rust//crate_universe:extensions.bzl", "crate")
 crate.annotation(
-    build_script_rundir = ".",
     crate = "ring",
     repositories = ["envoy_rust_crate_index"],
+    build_script_rundir = ".",
 )
 crate.from_cargo(
     name = "envoy_rust_crate_index",

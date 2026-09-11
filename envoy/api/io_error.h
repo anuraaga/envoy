@@ -6,7 +6,6 @@
 #include <string>
 #include <utility>
 
-#include "envoy/common/platform.h"
 #include "envoy/common/pure.h"
 
 namespace Envoy {
