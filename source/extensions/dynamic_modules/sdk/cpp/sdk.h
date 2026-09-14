@@ -248,7 +248,8 @@ enum class AttributeID : uint32_t {
   XdsUpstreamHostMetadata,
   XdsFilterChainName,
   HealthCheck,
-  UpstreamRequestedServerName
+  UpstreamRequestedServerName,
+  XdsVirtualClusterName
 };
 
 enum class LogLevel : uint32_t { Trace, Debug, Info, Warn, Error, Critical, Off };
@@ -352,6 +353,11 @@ struct ClusterHostCounts {
 
 class ChildSpan;
 
+/**
+ * A tracing span for the current HTTP stream. The active span is owned by Envoy and must not be
+ * finished by the module. A span may be stored and used in a later event hook on the same worker
+ * thread. Do not use a span after the stream has ended or move it to another thread.
+ */
 class Span {
 public:
   virtual ~Span() = default;
@@ -367,6 +373,11 @@ public:
   virtual std::unique_ptr<ChildSpan> spawnChild(std::string_view operation) = 0;
 };
 
+/**
+ * A tracing span owned by the module. Call finish when done. A child span may be stored and
+ * finished in a later event hook on the same worker thread, for example to cover off-thread work
+ * that resumes in a scheduled callback.
+ */
 class ChildSpan : public Span {
 public:
   virtual void finish() = 0;
@@ -735,7 +746,8 @@ public:
                                                                SocketDirection direction) = 0;
 
   /**
-   * Retrieves the active tracing span for the current stream.
+   * Retrieves the active tracing span for the current stream. The returned span may be stored and
+   * used in a later event hook on the same worker thread.
    */
   virtual std::unique_ptr<Span> getActiveSpan() = 0;
 
