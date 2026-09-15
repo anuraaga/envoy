@@ -879,7 +879,7 @@ proto-converter:
   project_desc: "Library that supports the conversion between protobuf binary and json"
   project_url: "https://github.com/grpc-ecosystem/proto-converter"
   apparent_name: proto-converter
-  release_date: "2024-06-25"
+  release_date: "2026-09-12"
   use_category:
   - dataplane_core
   - controlplane

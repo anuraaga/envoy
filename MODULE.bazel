@@ -73,7 +73,7 @@ bazel_dep(name = "platforms", version = "1.0.0")
 bazel_dep(name = "prometheus-metrics-model", version = "0.6.2.envoy", repo_name = "prometheus_metrics_model")
 bazel_dep(name = "protobuf", version = "35.1.bcr.envoy")
 bazel_dep(name = "protoc-gen-validate", version = "1.3.3.envoy")
-bazel_dep(name = "proto-converter", version = "0.0.0-20240625-1db7653.envoy")
+bazel_dep(name = "proto-converter", version = "0.0.0-20260912-3850764.envoy")
 bazel_dep(name = "proto-field-extraction", version = "0.0.0-240710-d5d39f0.envoy")
 bazel_dep(name = "proto-processing", version = "0.0.0-250110-279353c.envoy")
 bazel_dep(name = "proxy-wasm-cpp-host", version = "0.0.0-260704-f2db56a.envoy")
@@ -174,6 +174,12 @@ single_version_override(
     version = "0.20260413.0",
 )
 
+# proto-processing still requests the old version removed from the registry.
+single_version_override(
+    module_name = "proto-converter",
+    version = "0.0.0-20260912-3850764.envoy",
+)
+
 # Preserve the Windows fixes on top of the registry's patches.
 single_version_override(
     module_name = "cel-cpp",
@@ -185,12 +191,6 @@ single_version_override(
     module_name = "luajit",
     patch_strip = 1,
     patches = ["//bazel/windows:luajit.patch"],
-)
-
-single_version_override(
-    module_name = "proto-converter",
-    patch_strip = 1,
-    patches = ["//bazel/windows:proto-converter.patch"],
 )
 
 # testing/debugging

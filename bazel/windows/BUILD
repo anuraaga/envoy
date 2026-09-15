@@ -9,7 +9,6 @@ exports_files([
     "cel-cpp.patch",
     "dlfcn_win32.BUILD",
     "luajit.patch",
-    "proto-converter.patch",
 ])
 
 configure_make(

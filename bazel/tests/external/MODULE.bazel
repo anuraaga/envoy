@@ -24,6 +24,12 @@ local_path_override(
     path = "../../../docs",
 )
 
+# proto-processing still requests the old version removed from the registry.
+single_version_override(
+    module_name = "proto-converter",
+    version = "0.0.0-20260912-3850764.envoy",
+)
+
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
     is_default = True,

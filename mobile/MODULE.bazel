@@ -61,6 +61,12 @@ local_path_override(
     path = "envoy_build_config",
 )
 
+# proto-processing still requests the old version removed from the registry.
+single_version_override(
+    module_name = "proto-converter",
+    version = "0.0.0-20260912-3850764.envoy",
+)
+
 # TODO(phlax): Remove once rules_apple is updated
 single_version_override(
     module_name = "rules_swift",
