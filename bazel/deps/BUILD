@@ -61,13 +61,7 @@ alias(
 
 alias(
     name = "librdkafka",
-    actual = "@librdkafka",
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "librdkafka_headers",
-    hdrs = ["@librdkafka//:headers"],
+    actual = "@librdkafka//:librdkafka_cpp",
     visibility = ["//visibility:public"],
 )
 
@@ -86,10 +80,7 @@ alias(
 
 alias(
     name = "luajit",
-    actual = select({
-        "//bazel:windows_x86_64": "//bazel/windows:luajit",
-        "//conditions:default": "@luajit",
-    }),
+    actual = "@luajit",
     visibility = ["//visibility:public"],
 )
 
